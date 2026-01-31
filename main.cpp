@@ -73,15 +73,28 @@ class piece
         return true;
 
     }
-    bool conditions(int pcode,char op)
+    bool conditions(int pcode,char op,char (&env)[21][12])
     {
+        if(op=='s')
+        {
+            if(block(pcode,env)) return false;
+            else return true;
+        }
+        if(op=='a')
+        {
+            if(pcode==0)
+            {
+                if(env[x1][y1-1]=='.') return true;
+                else return false;
+            }
+        }
 
     }
     bool block(int pcode,char (&env)[21][12])
     {
         if(pcode==0)
         {
-            if((env[x1+1][y1]=='_' || env[x1+1][y1]=='#') || 
+            if((env[x1+1][y1]=='_' || env[x1+1][y1]=='#') ||
                (env[x2+1][y2]=='_' || env[x2+1][y2]=='#') ||
                (env[x3+1][y3]=='_' || env[x3+1][y3]=='#') ||
                (env[x4+1][y4]=='_' || env[x4+1][y4]=='#')    ) return true;
@@ -116,7 +129,7 @@ class piece
     bool movedown(int pcode,char (&env)[21][12])
     {
         
-        if(conditions(pcode,'s'))
+        if(conditions(pcode,'s',env))
         {
             x1++;
             x2++;
@@ -129,6 +142,38 @@ class piece
             piece_placement(pcode,env);
         }
 
+    }
+    bool moveleft(int pcode,char (&env)[21][12])
+    {
+        if(conditions(pcode,'a',env))
+        {
+            env[x1][y1]='.';
+            env[x2][y2]='.';
+            env[x3][y3]='.';
+            env[x4][y4]='.';
+            y1--;
+            y2--;
+            y3--;
+            y4--;
+            piece_placement(pcode,env);
+        }
+    }
+
+    bool moveright(int pcode,char (&env)[21][12])
+    {
+        if(conditions(pcode,'d',env))
+        {
+            env[x1][y1]='.';
+            env[x2][y2]='.';
+            env[x3][y3]='.';
+            env[x4][y4]='.';
+            y1++;
+            y2++;
+            y3++;
+            y4++;
+            piece_placement(pcode,env);
+
+        }
     }
     
 
@@ -158,6 +203,7 @@ void start_game(char (&env)[21][12])
     int pcode=rand() % 5;
     p.setter(pcode);
     p.piece_placement(pcode,env);
+    p.setact(true);
     
     while(ingame)
     {
@@ -170,10 +216,27 @@ void start_game(char (&env)[21][12])
         }
         if(clock()-time>400)
         {
-            p.movedown();
+            p.movedown(pcode,env);
             time=clock();
             
         }
+        if(_kbhit())
+        {
+            char x=getch();
+            if(x=='s')
+            {
+                p.movedown(pcode,env);
+            }
+            if(x=='a')
+            {
+                p.moveleft(pcode,env);
+            }
+            if(x=='d')
+            {
+                p.moveright(pcode,env);
+            }
+        }
+
 
 
     }
