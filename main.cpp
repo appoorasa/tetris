@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 #include <cstdlib>
 #include <string>
 #include <conio.h>
@@ -80,14 +81,64 @@ class piece
             if(block(pcode,env)) return false;
             else return true;
         }
-        if(op=='a')
+        else if(op=='a')
         {
             if(pcode==0)
             {
                 if(env[x1][y1-1]=='.') return true;
                 else return false;
             }
+            else if(pcode==1)
+            {
+                if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==2)
+            {
+                if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==3)
+            {
+                if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==4)
+            {
+                if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.') return true;
+                else return false;
+            }
+            
         }
+        else if(op=='d')
+        {
+           if(pcode==0)
+            {
+                if(env[x4][y4+1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==1)
+            {
+                if(env[x3][y3+1]=='.' && env[x4][y4+1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==2)
+            {
+                if(env[x2][y2+1]=='.' && env[x4][y4+1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==3)
+            {
+                if(env[x2][y2+1]=='.' && env[x4][y4+1]=='.') return true;
+                else return false;
+            }
+            else if(pcode==4)
+            {
+                if(env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
+                else return false;
+            } 
+        }
+        return true;
 
     }
     bool block(int pcode,char (&env)[21][12])
@@ -126,24 +177,24 @@ class piece
         }
         return false;
     }
-    bool movedown(int pcode,char (&env)[21][12])
+    void movedown(int pcode,char (&env)[21][12])
     {
         
         if(conditions(pcode,'s',env))
         {
+            env[x1][y1]='.';
+            env[x2][y2]='.';
+            env[x3][y3]='.';
+            env[x4][y4]='.';
             x1++;
             x2++;
             x3++;
             x4++;
-            env[x1-1][y1]='.';
-            env[x2-1][y2]='.';
-            env[x3-1][y3]='.';
-            env[x4-1][y4]='.';
             piece_placement(pcode,env);
         }
 
     }
-    bool moveleft(int pcode,char (&env)[21][12])
+    void moveleft(int pcode,char (&env)[21][12])
     {
         if(conditions(pcode,'a',env))
         {
@@ -158,8 +209,7 @@ class piece
             piece_placement(pcode,env);
         }
     }
-
-    bool moveright(int pcode,char (&env)[21][12])
+    void moveright(int pcode,char (&env)[21][12])
     {
         if(conditions(pcode,'d',env))
         {
@@ -178,7 +228,73 @@ class piece
     
 
 };
+void game(char (&env)[21][12]);
+int score_check(char (&env)[21][12])
+{
+    bool x;
+    int ans[4]={-1,-1,-1,-1};
+    int a=0;
+    for(int i=19;i>=0;i++)
+    {
+        x=true;
+        for(int j=1;j<11;j++)
+        {
+            if(env[i][j]=='.') x=false;
+        }
+        if(x)
+        {
+            ans[a]=i;
+            a++;
+        }
+    }
 
+    if(ans[1]!=-1) ans[1]+=1;
+    if(ans[2]!=-1) ans[1]+=2;
+    if(ans[3]!=-1) ans[1]+=3;
+
+    for(int k=0;k<4;k++)
+    {
+        if(ans[k]==-1) break;
+        if(ans[k]!=-1)
+        {
+            for(int i=1;i<11;i++)
+            {
+                env[ans[k]][i]='.';
+            }
+
+            for(int i=ans[k]-1;i>=0;i++)
+            {
+                for(int j=1;j<11;j++)
+                {
+                    env[i+1][j]=env[i][j];
+                    env[i][j]='.';
+                }
+            }
+        }
+    }
+
+    if(a==0) return 0;
+    if(a==1) return 100;
+    if(a==2) return 300;
+    if(a==3) return 500;
+    if(a==4) return 800;
+    return 0;
+}
+void display(char (&env)[21][12],int score,int lines,string state)
+{
+    system("cls");
+    cout<<"Score: "<<score<<"   Lines: "<<lines<<"  State: "<<state<<endl;
+    cout<<endl;
+    for(int i=0;i<21;i++)    /////env
+    {
+        for(int j=0;j<12;j++)
+        {
+            cout<<env[i][j];
+        }
+        cout<<endl;
+    }
+    cout<<"\nControls: a=left   d=right    s=down    w=rotate    p=pause    q=quit\n";
+}
 void start_game(char (&env)[21][12])
 {
 
@@ -204,15 +320,26 @@ void start_game(char (&env)[21][12])
     p.setter(pcode);
     p.piece_placement(pcode,env);
     p.setact(true);
+    int score=0,lines=0;
+    string state="Playing";
+    
     
     while(ingame)
     {
-        if(p.block(pcode,env)) p.setact(false);
+
+        if(p.block(pcode,env))
+        {
+            p.setact(false);
+            score+=score_check(env);
+        }
+        display(env,score,lines,state);
+        state="Playing";
         if(!p.getact())
         {
-            int pcode=rand() % 5;
+            pcode=rand() % 5;
             p.setter(pcode);
             p.piece_placement(pcode,env);
+            p.setact(true);
         }
         if(clock()-time>400)
         {
@@ -222,7 +349,7 @@ void start_game(char (&env)[21][12])
         }
         if(_kbhit())
         {
-            char x=getch();
+            char x=_getch();
             if(x=='s')
             {
                 p.movedown(pcode,env);
@@ -235,28 +362,61 @@ void start_game(char (&env)[21][12])
             {
                 p.moveright(pcode,env);
             }
+            if(x=='p')
+            {
+                state="Paused";
+                display(env,score,lines,state);
+                char y=' ';
+                cout<<"Game paused . Press p to continue or q to exit\n";
+                do
+                {
+                    y=_getch();
+                } while (y!='p' || y!='q');
+                if(y=='q')
+                {
+                    game(env);
+                    ingame=false;
+                }
+            }
+            if(x=='q')
+            {
+                cout<<"are you sure you want to exit? (y/n)\n";
+                char y=' ';
+                do
+                {
+                    y=_getch();
+                } while (y!='n' || y!='y');
+                if(y=='y')
+                {
+                    game(env);
+                    ingame=false;
+                }
+                
+            }
         }
 
-
-
+        
+        Sleep(50);
     }
 
 
 }
-void game(char (&env)[21][12])
+void game(char (&env)[21][12])  //s=1:playing   s=2:paused
 {
+
+
     int choice;
     bool ingame;
     bool validate=true;
-    cout<<"1-New Game \n2-Help \n3-Exit";
-    cin>>choice;
+    cout<<"1-New Game \n2-Help \n3-Exit\n";
     while(validate)
     {
+        cin>>choice;
         if(choice==1 || choice==2 || choice==3) validate=false;
         // else cout<<
         if(choice==1)
         {
-            ingame=true;
+            start_game(env);
 
         }
         else if(choice==2)
@@ -270,7 +430,6 @@ void game(char (&env)[21][12])
     }
 
 }
-
 
 int main ()
 {
@@ -293,14 +452,7 @@ int main ()
     {
         env[20][i]='_';
     }
-    for(int i=0;i<21;i++)    /////env
-    {
-        for(int j=0;j<12;j++)
-        {
-            cout<<env[i][j];
-        }
-        cout<<endl;
-    }
+    
 
     srand(time(0));
     game(env);
