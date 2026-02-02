@@ -26,7 +26,7 @@ class piece
             x3=0; y3=6;
             x4=0; y4=7;
         }
-        else if(pcode=1)
+        else if(pcode==1)
         {
             x1=0; y1=4;
             x2=0; y2=5;
@@ -58,21 +58,12 @@ class piece
     void setact(bool x) {isactive=x;}
     
 
-    bool piece_placement(int pcode,char (&env)[21][12])
+    void piece_placement(int pcode,char (&env)[21][12])
     {
-        
-        
-        if(env[x1][y1]=='.' && env[x2][y2]=='.' && env[x3][y3]=='.' && env[x4][y4]=='.')
-        {
-            env[x1][y1]='#';
-            env[x2][y2]='#';
-            env[x3][y3]='#';
-            env[x4][y4]='#';
-        }
-
-        else return false;
-        return true;
-
+        env[x1][y1]='#';
+        env[x2][y2]='#';
+        env[x3][y3]='#';
+        env[x4][y4]='#';
     }
     bool conditions(int pcode,char op,char (&env)[21][12])
     {
@@ -137,6 +128,11 @@ class piece
                 if(env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
                 else return false;
             } 
+        }
+        else if(op=='i')
+        {
+            if(env[x1][y1]=='.' && env[x2][y2]=='.' && env[x3][y3]=='.' && env[x4][y4]=='.') return true;
+            else return false;
         }
         return true;
 
@@ -228,13 +224,20 @@ class piece
     
 
 };
+
 void game(char (&env)[21][12]);
+
+void gotoXY(short x, short y)
+{
+    COORD pos = {x, y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
 int score_check(char (&env)[21][12])
 {
     bool x;
     int ans[4]={-1,-1,-1,-1};
     int a=0;
-    for(int i=19;i>=0;i++)
+    for(int i=19;i>=0;i--)
     {
         x=true;
         for(int j=1;j<11;j++)
@@ -245,6 +248,7 @@ int score_check(char (&env)[21][12])
         {
             ans[a]=i;
             a++;
+            // cout<<a<<endl;
         }
     }
 
@@ -262,7 +266,7 @@ int score_check(char (&env)[21][12])
                 env[ans[k]][i]='.';
             }
 
-            for(int i=ans[k]-1;i>=0;i++)
+            for(int i=ans[k]-1;i>=0;i--)
             {
                 for(int j=1;j<11;j++)
                 {
@@ -282,8 +286,8 @@ int score_check(char (&env)[21][12])
 }
 void display(char (&env)[21][12],int score,int lines,string state)
 {
-    system("cls");
-    cout<<"Score: "<<score<<"   Lines: "<<lines<<"  State: "<<state<<endl;
+    gotoXY(0, 0);
+    cout<<"\n\nScore: "<<score<<"   Lines: "<<lines<<"  State: "<<state<<endl;
     cout<<endl;
     for(int i=0;i<21;i++)    /////env
     {
@@ -292,6 +296,7 @@ void display(char (&env)[21][12],int score,int lines,string state)
             cout<<env[i][j];
         }
         cout<<endl;
+        
     }
     cout<<"\nControls: a=left   d=right    s=down    w=rotate    p=pause    q=quit\n";
 }
@@ -320,7 +325,7 @@ void start_game(char (&env)[21][12])
     p.setter(pcode);
     p.piece_placement(pcode,env);
     p.setact(true);
-    int score=0,lines=0;
+    int score=0,lines=0,temp;
     string state="Playing";
     
     
@@ -330,38 +335,34 @@ void start_game(char (&env)[21][12])
         if(p.block(pcode,env))
         {
             p.setact(false);
-            score+=score_check(env);
+            temp=score_check(env);
+            score+=temp;
+            if(temp) lines+=1;
+            else if(temp) lines+=2;
+            else if(temp) lines+=3;
+            else if(temp) lines+=4;
         }
-        display(env,score,lines,state);
-        state="Playing";
+        
         if(!p.getact())
         {
             pcode=rand() % 5;
             p.setter(pcode);
-            p.piece_placement(pcode,env);
+            if (p.conditions(pcode,'i',env)) p.piece_placement(pcode,env);
+            else 
+            {
+                cout<<"\nYou Lost\nYour score is: "<<score<<endl;
+                game(env);
+            }
+            
             p.setact(true);
         }
-        if(clock()-time>400)
-        {
-            p.movedown(pcode,env);
-            time=clock();
-            
-        }
+        
         if(_kbhit())
         {
             char x=_getch();
-            if(x=='s')
-            {
-                p.movedown(pcode,env);
-            }
-            if(x=='a')
-            {
-                p.moveleft(pcode,env);
-            }
-            if(x=='d')
-            {
-                p.moveright(pcode,env);
-            }
+            if(x=='s') p.movedown(pcode,env);
+            if(x=='a') p.moveleft(pcode,env);
+            if(x=='d') p.moveright(pcode,env);
             if(x=='p')
             {
                 state="Paused";
@@ -371,7 +372,7 @@ void start_game(char (&env)[21][12])
                 do
                 {
                     y=_getch();
-                } while (y!='p' || y!='q');
+                } while (y!='p' && y!='q');
                 if(y=='q')
                 {
                     game(env);
@@ -385,7 +386,7 @@ void start_game(char (&env)[21][12])
                 do
                 {
                     y=_getch();
-                } while (y!='n' || y!='y');
+                } while (y!='n' && y!='y');
                 if(y=='y')
                 {
                     game(env);
@@ -394,9 +395,17 @@ void start_game(char (&env)[21][12])
                 
             }
         }
-
+        if(clock()-time>400)
+        {
+            p.movedown(pcode,env);
+            time=clock();
+            
+        }
         
-        Sleep(50);
+        display(env,score,lines,state);
+        state="Playing";
+        
+        Sleep(5);
     }
 
 
@@ -404,6 +413,22 @@ void start_game(char (&env)[21][12])
 void game(char (&env)[21][12])  //s=1:playing   s=2:paused
 {
 
+    for(int i=0;i<21;i++) 
+    {
+        env[i][0]='|';
+        env[i][11]='|';
+    }
+    for(int i=0;i<20;i++)
+    {
+        for(int j=1;j<11;j++)
+        {
+            env[i][j]='.';
+        }
+    }
+    for(int i=1;i<11;i++)
+    {
+        env[20][i]='_';
+    }
 
     int choice;
     bool ingame;
