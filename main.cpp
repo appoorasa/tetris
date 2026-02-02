@@ -4,6 +4,8 @@
 #include <string>
 #include <conio.h>
 #include <ctime>
+#include <stdlib.h>
+
 using namespace std;
 
 class piece
@@ -13,12 +15,14 @@ class piece
     int x2,y2;
     int x3,y3;
     int x4,y4;
+    int r;
     bool isactive;
     public:
     bool getact() {return isactive; }
-
+    void rop() {r++;}
     void setter(int pcode)
     {
+        r=0;
         if(pcode==0)
         {
             x1=0; y1=4;
@@ -56,8 +60,6 @@ class piece
         }
     }
     void setact(bool x) {isactive=x;}
-    
-
     void piece_placement(int pcode,char (&env)[21][12])
     {
         env[x1][y1]='#';
@@ -76,18 +78,52 @@ class piece
         {
             if(pcode==0)
             {
-                if(env[x1][y1-1]=='.') return true;
-                else return false;
+                if(r%2==0)
+                {
+                    if(env[x1][y1-1]=='.') return true;
+                    else return false;
+                }
+                else
+                {
+                    if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
+                    else return false;
+                }
             }
             else if(pcode==1)
             {
-                if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.') return true;
-                else return false;
+                if(r%4==0)
+                {
+                    if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==1)
+                {
+                    if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==2)
+                {
+                    if( env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==3)
+                {
+                    if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
             }
             else if(pcode==2)
             {
-                if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
-                else return false;
+                if(r%2==0)
+                {
+                    if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
+                else
+                {
+                    if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
+                    else return false;
+                }
             }
             else if(pcode==3)
             {
@@ -96,8 +132,26 @@ class piece
             }
             else if(pcode==4)
             {
-                if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.') return true;
-                else return false;
+                if(r%4==0)
+                {
+                    if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==1)
+                {
+                    if(env[x2][y2-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==2)
+                {
+                    if( env[x4][y4-1]=='.' && env[x1][y1-1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==3)
+                {
+                    if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
             }
             
         }
@@ -105,18 +159,53 @@ class piece
         {
            if(pcode==0)
             {
-                if(env[x4][y4+1]=='.') return true;
-                else return false;
+                if(r%2==0)
+                {
+                    if(env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                else
+                {
+                    if(env[x4][y4+1]=='.' && env[x3][y3+1]=='.' && env[x2][y2+1]=='.' && env[x1][y1+1]=='.') return true;
+                    else return false;
+                }
             }
             else if(pcode==1)
             {
-                if(env[x3][y3+1]=='.' && env[x4][y4+1]=='.') return true;
-                else return false;
+                if(r%4==0)
+                {
+                    if(env[x3][y3+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==1)
+                {
+                    if(env[x3][y3+1]=='.' && env[x1][y1+1]=='.' && env[x2][y2+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==2)
+                {
+                    if(env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==3)
+                {
+                    if(env[x3][y3+1]=='.' && env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+
             }
             else if(pcode==2)
             {
-                if(env[x2][y2+1]=='.' && env[x4][y4+1]=='.') return true;
-                else return false;
+                if(r%2==0)
+                {
+                    if(env[x4][y4+1]=='.' && env[x2][y2+1]=='.') return true;
+                    else return false;
+                }
+                else
+                {
+                    if(env[x4][y4+1]=='.' && env[x2][y2+1]=='.' && env[x1][y1+1]=='.') return true;
+                    else return false;
+                }
             }
             else if(pcode==3)
             {
@@ -125,14 +214,107 @@ class piece
             }
             else if(pcode==4)
             {
-                if(env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
-                else return false;
+                if(r%4==0)
+                {
+                    if(env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==1)
+                {
+                    if(env[x3][y3+1]=='.' && env[x1][y1+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==2)
+                {
+                    if(env[x1][y1+1]=='.' && env[x2][y2+1]=='.') return true;
+                    else return false;
+                }
+                if(r%4==3)
+                {
+                    if(env[x3][y3+1]=='.' && env[x2][y2+1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
             } 
         }
         else if(op=='i')
         {
             if(env[x1][y1]=='.' && env[x2][y2]=='.' && env[x3][y3]=='.' && env[x4][y4]=='.') return true;
             else return false;
+        }
+        else if(op='w')
+        {
+            if(pcode==0)
+            {
+                if(r%2==0)
+                {
+                    if(env[x1-2][y1+2]=='.' && env[x2-1][y1+1]=='.' && env[x4+1][y4-1]=='.') return true;
+                    else return false;
+                }
+                else 
+                {
+                    if(env[x1+2][y1-2]=='.' && env[x2+1][y1-1]=='.' && env[x4-1][y4+1]=='.')  return true;
+                    else return false;
+                }
+            }
+            else if(pcode==1)
+            {
+                if(r%4==0)
+                {
+                    if(env[x2-1][y2]=='.') return true;
+                    else return false;
+                }
+                else if(r&4==1)
+                {
+                    if(env[x2][y2+1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==2)
+                {
+                    if(env[x2+1][y2]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==3)
+                {
+                    if(env[x2][y2-1]=='.') return true;
+                    else return false;
+                }
+            }
+            else if(pcode==2)
+            {
+                if(r%2==0)
+                {
+                    if(env[x2-1][y2]=='.' && env[x3][y3-1]=='.') return true;
+                    else return false;
+                }
+                else 
+                {
+                    if(env[x4][y4+1]=='.' && env[x2+1][y2+1]=='.') return true;
+                    else return false;
+                }
+            }
+            else if(pcode==4)
+            {
+                if(r%4==0)
+                {
+                    if(env[x4-1][y4]=='.' && env[x3-1][y3]=='.' && env[x3+1][x3]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==1)
+                {
+                    if(env[x3][y3+1]=='.' && env[x3][y3-1]=='.' && env[x4][y4+1]=='.') return true;
+                    else return false;
+                }
+                else if(r%4==2)
+                {
+                    if(env[x3-1][y3]=='.' && env[x3+1][y3]=='.' && env[x3+1][y4]=='.') return true;
+                    else return true;
+                }
+                else if(r%4==3)
+                {
+                    if(env[x3][y3+1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
+                    else return false;
+                }
+            }
         }
         return true;
 
@@ -141,23 +323,47 @@ class piece
     {
         if(pcode==0)
         {
-            if((env[x1+1][y1]=='_' || env[x1+1][y1]=='#') ||
-               (env[x2+1][y2]=='_' || env[x2+1][y2]=='#') ||
-               (env[x3+1][y3]=='_' || env[x3+1][y3]=='#') ||
-               (env[x4+1][y4]=='_' || env[x4+1][y4]=='#')    ) return true;
+            if(r%2==0)
+            {
+                if(env[x1+1][y1]!='.' || env[x2+1][y2]!='.' || env[x3+1][y3]!='.' || env[x4+1][y4]!='.') return true;
+            }
+            else if(r%2==1)
+            {
+                if(env[x4+1][y4]!='.') return true;
+            }
         }
         else if(pcode==1)
         {
-            if((env[x1+1][y1]=='_' || env[x1+1][y1]=='#') || 
-               (env[x3+1][y3]=='_' || env[x3+1][y3]=='#') ||
-               (env[x4+1][y4]=='_' || env[x4+1][y4]=='#')    ) return true;
+            if(r%4==0)
+            {
+                if((env[x1+1][y1]!='.' || env[x3+1][y3]!='.' || env[x4+1][y4]!='.') ) return true;
+            }
+            else if(r%4==1)
+            {
+                if( env[x3+1][y3]!='.' || env[x4+1][y4]!='.' ) return true;
+            }
+            else if(r%4==2)
+            {
+                if( env[x3+1][y3]!='.' || env[x1+1][y1]!='.' || env[x2+1][y2]!='.') return true;
+            }
+            else if(r%4==3)
+            {
+                if( env[x1+1][y1]!='.' || env[x4+1][y4]!='.' ) return true;
+            }
+
+            
 
         }
         else if(pcode==2)
         {
-            if((env[x1+1][y1]=='_' || env[x1+1][y1]=='#') || 
-               (env[x3+1][y3]=='_' || env[x3+1][y3]=='#') ||
-               (env[x4+1][y4]=='_' || env[x4+1][y4]=='#')    ) return true;
+           if(r%2==0)
+            {
+                if(env[x1+1][y1]!='.' ||  env[x3+1][y3]!='.' || env[x4+1][y4]!='.') return true;
+            }
+            else if(r%2==1)
+            {
+                if(env[x2+1][y2]!='.'  || env[x4+1][y4]!='.') return true;
+            }
             
         }
         else if(pcode==3)
@@ -167,9 +373,22 @@ class piece
         }
         else if(pcode==4)
         {
-            if((env[x2+1][y2]=='_' || env[x2+1][y2]=='#') ||
-               (env[x3+1][y3]=='_' || env[x3+1][y3]=='#') ||
-               (env[x4+1][y4]=='_' || env[x4+1][y4]=='#')    ) return true;
+           if(r%4==0)
+            {
+                if( env[x2+1][y2]!='.' || env[x3+1][y3]!='.' || env[x4+1][y4]!='.') return true;
+            }
+            else if(r%4==1)
+            {
+                if(env[x1+1][y1]!='.'  || env[x4+1][y4]!='.') return true;
+            }
+            else if(r%4==2)
+            {
+                if(env[x1+1][y1]!='.'  || env[x3+1][y3]!='.' || env[x4+1][y4]!='.') return true;
+            }
+            else if(r%4==3)
+            {
+                if(env[x1+1][y1]!='.' || env[x2+1][y2]!='.' ) return true;
+            }
         }
         return false;
     }
@@ -221,12 +440,191 @@ class piece
 
         }
     }
-    
+    void rotate(int pcode,char (&env)[21][12])
+    {
+        if(conditions(pcode,'w',env))
+        {
+            if(pcode==0)
+            {
+                if(r%2==0)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1-=2;
+                    y1+=2;
+                    x2--;
+                    y2++;
+                    x4++;
+                    y4--;
+                    piece_placement(pcode,env);
+                }
+                else if(r%2==1)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1+=2;
+                    y1-=2;
+                    x2++;
+                    y2--;
+                    x4--;
+                    y4++;
+                    piece_placement(pcode,env);
+                }
+
+            }
+            else if(pcode==1)
+            {
+                if(r%4==0)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1--;
+                    y1++;
+                    x3++;
+                    y3--;
+                    x4--;
+                    y4--;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==1)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1++;
+                    y1++;
+                    x3--;
+                    y3--;
+                    x4--;
+                    y4++;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==2)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1++;
+                    y1--;
+                    x3--;
+                    y3++;
+                    x4++;
+                    y4++;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==3)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1--;
+                    y1--;
+                    x3++;
+                    y3++;
+                    x4++;
+                    y4--;
+                    piece_placement(pcode,env);
+                }
+
+            }
+            else if(pcode==2)
+            {
+                if(r%2==0)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1--;
+                    y1++;
+                    x3--;
+                    y3--;
+                    y4-=2;
+                    piece_placement(pcode,env);
+                }
+                else if(r%2==1)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1++;
+                    y1--;
+                    x3++;
+                    y3++;
+                    y4+=2;
+                    piece_placement(pcode,env);
+                }
+            }
+            else if(pcode==4)
+            {
+                if(r%4==0)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    y1+=2;
+                    x2--;
+                    y2++;
+                    x4++;
+                    y4--;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==1)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1+=2;
+                    x2++;
+                    y2++;
+                    x4--;
+                    y4--;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==2)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    y1-=2;
+                    x2++;
+                    y2--;
+                    x4--;
+                    y4++;
+                    piece_placement(pcode,env);
+                }
+                else if(r%4==3)
+                {
+                    env[x1][y1]='.';
+                    env[x2][y2]='.';
+                    env[x3][y3]='.';
+                    env[x4][y4]='.';
+                    x1-=2;
+                    x2--;
+                    y2--;
+                    x4++;
+                    y4++;
+                    piece_placement(pcode,env);
+                }
+            }
+        }
+    }
 
 };
-
 void game(char (&env)[21][12]);
-
 void gotoXY(short x, short y)
 {
     COORD pos = {x, y};
@@ -299,6 +697,7 @@ void display(char (&env)[21][12],int score,int lines,string state)
         
     }
     cout<<"\nControls: a=left   d=right    s=down    w=rotate    p=pause    q=quit\n";
+    cout<<" \n\n\n\n\n  \n \n";
 }
 void start_game(char (&env)[21][12])
 {
@@ -327,6 +726,7 @@ void start_game(char (&env)[21][12])
     p.setact(true);
     int score=0,lines=0,temp;
     string state="Playing";
+    int r0=0,r1=0,r2=0,r4=0;
     
     
     while(ingame)
@@ -363,12 +763,17 @@ void start_game(char (&env)[21][12])
             if(x=='s') p.movedown(pcode,env);
             if(x=='a') p.moveleft(pcode,env);
             if(x=='d') p.moveright(pcode,env);
+            if(x=='w')
+            {
+               p.rotate(pcode,env);
+               p.rop();
+
+            }
             if(x=='p')
             {
                 state="Paused";
                 display(env,score,lines,state);
                 char y=' ';
-                cout<<"Game paused . Press p to continue or q to exit\n";
                 do
                 {
                     y=_getch();
@@ -410,7 +815,7 @@ void start_game(char (&env)[21][12])
 
 
 }
-void game(char (&env)[21][12])  //s=1:playing   s=2:paused
+void game(char (&env)[21][12])  
 {
 
     for(int i=0;i<21;i++) 
@@ -433,14 +838,16 @@ void game(char (&env)[21][12])  //s=1:playing   s=2:paused
     int choice;
     bool ingame;
     bool validate=true;
-    cout<<"1-New Game \n2-Help \n3-Exit\n";
+    string s="1-New Game \n2-Help \n3-Exit\n";
+    cout<<s;
+
     while(validate)
     {
         cin>>choice;
         if(choice==1 || choice==2 || choice==3) validate=false;
-        // else cout<<
         if(choice==1)
         {
+            gotoXY(0, 0);
             start_game(env);
 
         }
