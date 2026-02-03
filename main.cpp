@@ -78,81 +78,82 @@ class piece
         {
             if(pcode==0)
             {
-                if(r%2==0)
+                if(r%2==0 && y1>=2)
                 {
-                    if( y1>=2 && env[x1][y1-1]=='.') return true;
+                    if( env[x1][y1-1]=='.') return true;
                     else return false;
                 }
-                else
+                else if(r%2==1 && y1>=2)
                 {
-                    if(y1>=2 && env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
                     else return false;
                 }
             }
             else if(pcode==1)
             {
-                if(r%4==0)
+                if(r%4==0 && y1>=2 )
                 {
-                    if(y1>=2 && env[x1][y1-1]=='.' && env[x4][y4-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==1)
+                else if(r%4==1 && y4>=2)
                 {
-                    if(y4>=2 && env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==2)
+                else if(r%4==2 && y3>=2 )
                 {
-                    if(y3>=2 && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if(env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==3)
+                else if(r%4==3 && y1>=2 )
                 {
-                    if(y1>=2 && env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x2][y2-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
             }
             else if(pcode==2)
             {
-                if(r%2==0)
+                if(r%2==0 && y1>=2)
                 {
-                    if(y1>=2  && env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
-                else
+                else if(r%2==1 && y4>=2 )
                 {
-                    if( y4>=2 && env[x1][y1-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
+                    if(env[x1][y1-1]=='.' && env[x3][y3-1]=='.' && env[x4][y4-1]=='.') return true;
                     else return false;
                 }
             }
-            else if(pcode==3)
+            else if(pcode==3 && y3>=2)
             {
-                if( y3>=2 && env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
+                if( env[x1][y1-1]=='.' && env[x3][y3-1]=='.') return true;
                 else return false;
             }
             else if(pcode==4)
             {
-                if(r%4==0)
+                if(r%4==0 && y2>=2)
                 {
-                    if(y2>=2 && env[x1][y1-1]=='.' && env[x2][y2-1]=='.') return true;
+                    if( env[x1][y1-1]=='.' && env[x2][y2-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==1)
+                else if(r%4==1 && y2>=2 )
                 {
-                    if(y2>=2 && env[x2][y2-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if( env[x2][y2-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==2)
+                else if(r%4==2 && y4>=2)
                 {
-                    if(y4>=2 && env[x4][y4-1]=='.' && env[x1][y1-1]=='.') return true;
+                    if( env[x4][y4-1]=='.' && env[x1][y1-1]=='.') return true;
                     else return false;
                 }
-                else if(r%4==3)
+                else if(r%4==3 && y1>=2)
                 {
-                    if( y1>=2 && env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
+                    if(  env[x1][y1-1]=='.' && env[x4][y4-1]=='.' && env[x3][y3-1]=='.') return true;
                     else return false;
                 }
             }
+            return false;
             
         }
         else if(op=='d')
@@ -245,16 +246,17 @@ class piece
         {
             if(pcode==0)
             {
-                if(r%2==0 && x1>=3 && x3<=18)
+                if(r%2==0 && x3<=18)
                 {
                     if( env[x1-2][y1+2]=='.' && env[x2-1][y1+1]=='.' && env[x4+1][y4-1]=='.') return true;
                     else return false;
                 }
-                else if(r%2==1 && y3<=9 && y1>=3)
+                else if(r%2==1 && y3>=3 && y3<=9)
                 {
                     if(env[x1+2][y1-2]=='.' && env[x2+1][y1-1]=='.' && env[x4-1][y4+1]=='.')  return true;
                     else return false;
                 }
+                else return false;
             }
             else if(pcode==1)
             {
